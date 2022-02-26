@@ -7,7 +7,7 @@ const userSchema = new Schema({
         required: true
     },
 
-    passwordHash: {
+    password: {
         type: String,
         required: true
     },
@@ -15,8 +15,16 @@ const userSchema = new Schema({
     fullName: {
         type: String,
         required: true
+    },
+
+    email: {
+        type: String,
+        required: true
     }
 })
 
 const User = mongoose.model('User', userSchema);
-module.exports = User;
+module.exports = {
+    userSchema, 
+    User
+}

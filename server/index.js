@@ -35,18 +35,50 @@ app.get('/',(req,res)=>{
 
 app.post('/register', (req, res) => {
   let body = req.body
-  body.password = hasher.generate(body.password)
 
-  const newUser = new User(body)
+  User.find( { $or: [ { username: body.username }, { email: body.email } ] }, (err, docs) => {
+    if(docs.length > 0) {
+      res.send( { error: "Username/email already exists "} )
+    }
 
-  newUser.save()
-    .then(result => {
-      res.send(result);
-      console.log("done")
+    else {
+      body.password = hasher.generate(body.password)
+      const newUser = new User(body)
+
+      newUser.save()
+        .then(result => {
+          res.send(result);
+          console.log("done")
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  })
+
+})
+
+app.get('/login', (req, res) => {
+  let user = req.query.user
+  let pass = req.query.pass
+
+
+  User.find((err, docs) => {
+    if(err) {
+      return console.log(err)
+    }
+
+    let loggedIn = null
+
+    docs.forEach(it => {
+      if(it.username == user && hasher.verify(pass, it.password)) {
+        loggedIn = it
+      }
     })
-    .catch(err => {
-      console.log(err);
-    });
+
+    if(loggedIn) res.send(loggedIn)
+    else res.send( { error: "Invalid username/password" } )
+  })
 })
 
 app.get('/u/:username', (req, res) => {
@@ -110,8 +142,8 @@ app.get('/q/:question', (req, res) => {
 
 })
 
-app.post('/answer', (req, res) => {
-  const qId = req.query.q
+app.post('/answer/:question', (req, res) => {
+  const qId = req.params.question
 
   Question.findById(qId)
   .then(result => {
@@ -129,6 +161,74 @@ app.post('/answer', (req, res) => {
     console.log(err)
     res.status(500).json(err)
   });
+
+})
+
+app.delete('/q/:question', (req, res) => {
+  const qId = req.params.question
+  let ans = req.query.ans
+
+  Question.findById(qId)
+  .then(result => {
+
+    let doc = result;
+
+    if(result) {
+      if(ans) {
+
+        doc.answers = doc.answers.filter(it => {
+          return it._id.toString() != ans
+        })
+        doc.save()
+        res.send(doc)
+
+      }
+
+      else {
+        doc.deleteOne()
+        res.send(`Question ${doc._id} deleted`)
+      }
+    }
+    else {
+      res.status(404).json({error: 'Question not found'})
+    }
+  })
+
+})
+
+app.put('/q/:question', (req, res) => {
+  const qId = req.params.question
+  const newBody = req.body.content
+  let ans = req.query.ans
+
+  Question.findById(qId)
+  .then(result => {
+
+    let doc = result;
+
+    if(result) {
+      if(ans) {
+
+        doc.answers = doc.answers.map(item => {
+          let x = item
+          if(item._id == ans) x.body = newBody
+          
+          return x
+        })
+
+      }
+
+      else {
+        doc.body = newBody
+      }
+
+      doc.save()
+      res.send(doc)
+    }
+    else {
+      res.status(404).json({error: 'Question not found'})
+    }
+  })
 
 })
 // start the app on the specified port

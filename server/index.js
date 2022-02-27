@@ -212,7 +212,7 @@ app.put('/q/:question', (req, res) => {
         doc.answers = doc.answers.map(item => {
           let x = item
           if(item._id == ans) x.body = newBody
-          
+
           return x
         })
 
@@ -230,6 +230,45 @@ app.put('/q/:question', (req, res) => {
     }
   })
 
+})
+
+app.put('/vote/:question', (req, res) => {
+  const qId = req.params.question
+  let down = req.query.d
+  let ans = req.query.ans
+
+  Question.findById(qId)
+  .then(result => {
+
+    let doc = result;
+
+    if(result) {
+      if(ans) {
+
+        doc.answers = doc.answers.map(item => {
+          let x = item
+          if(item._id == ans) {
+            if(down) x.upvotes--
+            else x.upvotes++
+          }
+
+          return x
+        })
+
+      }
+
+      else {
+        if(down) doc.upvotes--
+        else doc.upvotes++
+      }
+
+      doc.save()
+      res.send(doc)
+    }
+    else {
+      res.status(404).json({error: 'Question not found'})
+    }
+  })
 })
 // start the app on the specified port
 const PORT = process.env.PORT || 5000;

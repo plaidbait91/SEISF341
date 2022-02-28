@@ -193,6 +193,10 @@ app.delete('/q/:question', (req, res) => {
       res.status(404).json({error: 'Question not found'})
     }
   })
+  .catch(err => {
+    console.log(err)
+    res.status(500).json(err)
+  });
 
 })
 
@@ -229,6 +233,10 @@ app.put('/q/:question', (req, res) => {
       res.status(404).json({error: 'Question not found'})
     }
   })
+  .catch(err => {
+    console.log(err)
+    res.status(500).json(err)
+  });
 
 })
 
@@ -269,6 +277,31 @@ app.put('/vote/:question', (req, res) => {
       res.status(404).json({error: 'Question not found'})
     }
   })
+  .catch(err => {
+    console.log(err)
+    res.status(500).json(err)
+  });
+})
+
+app.get('/search', (req, res) => {
+
+  const searchTerm = req.query.q
+  const regex = searchTerm.replace(" ", "|")
+  const searchRegex = new RegExp(regex)
+
+  Question.find({ $or: [
+    { body: { $regex: searchRegex, $options: 'i' } },
+    { title: { $regex: searchRegex, $options: 'i' } },
+    { answers: { $elemMatch: { body: { $regex: searchRegex, $options: 'i' } } } }
+  ]})
+  .then(result => {
+    res.send(result)
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).json(err)
+  })
+
 })
 // start the app on the specified port
 const PORT = process.env.PORT || 5000;

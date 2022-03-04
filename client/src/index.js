@@ -5,16 +5,19 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import Home from './pages/Home'
+import {ChakraProvider} from '@chakra-ui/react'
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<App />} >
-        <Route path="/" element={<Home/>} />
-      </Route>
-    </Routes>     
-    </BrowserRouter>
+    <ChakraProvider>
+      <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />} >
+          <Route path="/home" element={<Home/>} />
+        </Route>
+      </Routes>     
+      </BrowserRouter>
+    </ChakraProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

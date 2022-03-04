@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import {Container,
-    Button} 
-    from '@chakra-ui/react'
+import { Button, Container } from "@chakra-ui/react";
+import Questionwrapper from "../components/Questionwrapper";
 
 export default function Home() {
     const [questions,setQuestions] = useState([]);
@@ -18,11 +17,11 @@ export default function Home() {
     },[])
     return(
         <div>
-            <Container>
-            <Button colorScheme='red'>Button</Button>
+            <Container border='solid black' padding='20px'>
                {
                    questions.map(question =>(
-                       <li key={question._id}>{question.title} </li>
+                    //    <li key={question._id}>{question.title} </li>
+                    <Questionwrapper title={question.title} body={question.body}/>
                    ))
                }
             </Container>

@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const hasher = require('password-hash');
 
 const Answer = require('./models/answer');
@@ -10,7 +11,7 @@ const _ = require('./models/user');
 const User = _.User
 
 const app = express();
-
+app.use(cors());
 // connect to mongoDB atlas using mongoose
 mongoose.connect( process.env.MONGODB_API_URI,
   {
@@ -57,6 +58,16 @@ app.post('/register', (req, res) => {
   })
 
 })
+
+app.get('/all-questions',(req,res)=>{
+  Question.find()
+  .then((result)=>{
+    res.send(result);
+  })
+  .catch(err=>{
+    console.log(err)
+  })
+});
 
 app.get('/login', (req, res) => {
   let user = req.query.user

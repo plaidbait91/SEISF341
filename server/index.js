@@ -4,6 +4,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const hasher = require('password-hash');
+const jwt = require('jsonwebtoken');
+const auth = require('./checkAuth');
 
 const Answer = require('./models/answer');
 const Question = require('./models/question');
@@ -74,20 +76,29 @@ app.get('/login', (req, res) => {
   let pass = req.query.pass
 
 
-  User.find((err, docs) => {
+  User.findOne({ username: user}, (err, doc) => {
     if(err) {
       return console.log(err)
     }
 
     let loggedIn = null
 
-    docs.forEach(it => {
-      if(it.username == user && hasher.verify(pass, it.password)) {
-        loggedIn = it
-      }
-    })
+    if(hasher.verify(pass, doc.password)) loggedIn = doc;
 
-    if(loggedIn) res.send(loggedIn)
+    if(loggedIn) {
+      const payload = {
+        name: doc.fullName,
+        email: doc.email
+      }
+
+      jwt.sign(payload, process.env.TOKEN_KEY, (err, token) => {
+        if(err) res.send( { error: err } )
+        return res.send({
+          userDetails: loggedIn,
+          token: token
+        })
+      })
+    } 
     else res.send( { error: "Invalid username/password" } )
   })
 })
@@ -109,12 +120,15 @@ app.get('/u/:username', (req, res) => {
   });
 })
 
-app.post('/ask', (req, res) => {
+app.post('/ask', auth, (req, res) => {
   const question = new Question(req.body)
 
   question.save()
     .then(result => {
-      res.send(result);
+      res.send({
+        result: result,
+        user: req.user
+      });
       console.log("done")
     })
     .catch(err => {
@@ -153,7 +167,7 @@ app.get('/q/:question', (req, res) => {
 
 })
 
-app.post('/answer/:question', (req, res) => {
+app.post('/answer/:question', auth, (req, res) => {
   const qId = req.params.question
 
   Question.findById(qId)
@@ -175,7 +189,7 @@ app.post('/answer/:question', (req, res) => {
 
 })
 
-app.delete('/q/:question', (req, res) => {
+app.delete('/q/:question', auth, (req, res) => {
   const qId = req.params.question
   let ans = req.query.ans
 
@@ -185,20 +199,40 @@ app.delete('/q/:question', (req, res) => {
     let doc = result;
 
     if(result) {
+ 
       if(ans) {
 
-        doc.answers = doc.answers.filter(it => {
-          return it._id.toString() != ans
+        let temp = doc.answers.filter(it => {
+          return !(it._id.toString() == ans && it.postedBy.email == req.user.email)
         })
-        doc.save()
-        res.send(doc)
+
+        if(temp.length != doc.answers.length) {
+          doc.save()
+          res.send(doc)
+        }
+
+        else {
+          temp = temp.filter(it => {
+            return it._id.toString() == ans
+          })
+
+          if(temp.length > 0) res.status(401).send({error: 'Unauthorized modify/delete'})
+          else res.status(404).send({error: 'Answer not found'})
+        }
 
       }
 
       else {
-        doc.deleteOne()
-        res.send(`Question ${doc._id} deleted`)
+        if(req.user.email == result.postedBy.email) {
+          doc.deleteOne()
+          res.send(`Question ${doc._id} deleted`)
+        }
+
+        else {
+          res.status(401).send({error: 'Unauthorized modify/delete'})
+        }
       }
+
     }
     else {
       res.status(404).json({error: 'Question not found'})
@@ -211,7 +245,7 @@ app.delete('/q/:question', (req, res) => {
 
 })
 
-app.put('/q/:question', (req, res) => {
+app.put('/q/:question', auth, (req, res) => {
   const qId = req.params.question
   const newBody = req.body.content
   let ans = req.query.ans
@@ -222,23 +256,43 @@ app.put('/q/:question', (req, res) => {
     let doc = result;
 
     if(result) {
+ 
       if(ans) {
 
+        let found = false;
+        let hasAuth = false;
         doc.answers = doc.answers.map(item => {
           let x = item
-          if(item._id == ans) x.body = newBody
+
+          if(item._id == ans) {
+            found = true;
+            if(item.postedBy.email == req.user.email) {
+              x.body = newBody
+              hasAuth = true;
+            }
+          } 
 
           return x
         })
 
+        if(!found) return res.status(404).send({error: 'Answer not found'})
+        else if(!hasAuth) return res.status(401).send({error: 'Unauthorized modify/delete'})
+
       }
 
       else {
-        doc.body = newBody
+        if(req.user.email == result.postedBy.email) {
+          doc.body = newBody
+        }
+
+        else {
+          return res.status(401).send({error: 'Unauthorized modify/delete'})
+        }
       }
 
       doc.save()
       res.send(doc)
+
     }
     else {
       res.status(404).json({error: 'Question not found'})
@@ -251,7 +305,7 @@ app.put('/q/:question', (req, res) => {
 
 })
 
-app.put('/vote/:question', (req, res) => {
+app.put('/vote/:question', auth, (req, res) => {
   const qId = req.params.question
   let down = req.query.d
   let ans = req.query.ans

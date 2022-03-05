@@ -207,6 +207,7 @@ app.delete('/q/:question', auth, (req, res) => {
         })
 
         if(temp.length != doc.answers.length) {
+          doc.answers = temp
           doc.save()
           res.send(doc)
         }

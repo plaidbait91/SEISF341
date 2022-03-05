@@ -35,12 +35,13 @@ const Question = () => {
         <GridItem colSpan={4} bg='yellow.100' borderWidth='10px' borderColor='yellow.100'>
         <Text align="left">{question.body}</Text>
         <br/>
-        <GridItem border='solid black'>
+        <GridItem borderColor="yellow.100">
             {question.answers.map(answer => (
-                <Grid border='solid black'>
+                <Grid borderColor="yellow.100">
                     <Text align="left">{answer.body}</Text>
                     <Grid templateColumns='repeat(2, 1fr)'>
-                        <GridItem colStart={2}><IconButton w='8' icon={<BiUpvote/>} colorScheme="green" /></GridItem>
+                        <GridItem colStart={2}><Text align="right" fontSize="3xl">{answer.upvotes}</Text></GridItem>
+                        <GridItem colStart={2} marginLeft="540px"><IconButton w='8' icon={<BiUpvote/>} colorScheme="green" /></GridItem>
                         <GridItem colStart={3}><IconButton w='8' icon={<BiDownvote/>} colorScheme="red" /></GridItem>
                     </Grid>
                     {/* <br/> */}

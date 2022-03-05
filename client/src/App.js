@@ -54,6 +54,7 @@ function App() {
             <Text as={'span'} color={'red.400'}>
               your QnA Forum!
             </Text>
+            <br/><br/>
           </Heading>
           <Outlet />
       {/* <h1>Name: {name}</h1>

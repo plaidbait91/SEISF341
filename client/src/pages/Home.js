@@ -17,11 +17,11 @@ export default function Home() {
     },[])
     return(
         <div>
-            <Container border='solid black' padding='20px'>
+            <Container maxW='container.lg' border='solid black' padding='20px'>
                {
                    questions.map(question =>(
                     //    <li key={question._id}>{question.title} </li>
-                    <Questionwrapper title={question.title} body={question.body}/>
+                    <Questionwrapper question={question}/>
                    ))
                }
             </Container>

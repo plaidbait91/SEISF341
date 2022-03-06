@@ -3,7 +3,7 @@ import Login from './Login';
 import Logout from './Logout';
 import {useState} from 'react' ;
 import {Outlet,Link} from 'react-router-dom'
-import {Text, Heading, Flex, Link as LinkC, Button, Input, InputGroup, InputLeftElement} from '@chakra-ui/react'
+import {Text, Heading, Flex, Link as LinkC, Button, Input, InputGroup, InputLeftElement, IconButton} from '@chakra-ui/react'
 import {SearchIcon} from '@chakra-ui/icons'
 
 function App() {
@@ -32,12 +32,12 @@ function App() {
         </Flex>
 
         <Flex justify="space-around" w="20%" align="center">
-        <InputGroup>
+        <InputGroup borderColor={"white"}>
           <InputLeftElement
             pointerEvents='none'
-            children={<SearchIcon color='white.300' />}
+            children={<IconButton aria-label='Search' icon={<SearchIcon />} colorScheme="red.400" />}
           />
-          <Input placeholder='Search...' color='white.300' _placeholder={{ color: 'white' }} />
+          <Input placeholder=' Search...' color='white.300' _placeholder={{ color: 'white' }} />
         </InputGroup>
         </Flex>
       </Flex>

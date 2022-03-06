@@ -4,7 +4,8 @@ import Logout from './Logout';
 import {useState} from 'react' ;
 import {Outlet,Link} from 'react-router-dom'
 import {Text, Heading, Flex, Link as LinkC, Button, Input, InputGroup, InputLeftElement, IconButton} from '@chakra-ui/react'
-import {SearchIcon} from '@chakra-ui/icons'
+// import {SearchIcon} from '@chakra-ui/icons'
+import {BiSearch} from "react-icons/bi"
 
 function App() {
   const [name, setName] = useState();
@@ -35,7 +36,7 @@ function App() {
         <InputGroup borderColor={"white"}>
           <InputLeftElement
             pointerEvents='none'
-            children={<IconButton aria-label='Search' icon={<SearchIcon />} colorScheme="red.400" />}
+            children={<IconButton aria-label='Search' icon={<BiSearch />} colorScheme="red.400" />}
           />
           <Input placeholder=' Search...' color='white.300' _placeholder={{ color: 'white' }} />
         </InputGroup>

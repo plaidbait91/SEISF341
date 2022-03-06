@@ -1,4 +1,5 @@
 import { Box, Flex, Heading, Text, HStack } from "@chakra-ui/react"
+import {Outlet,Link} from 'react-router-dom'
 
 export default function Questionwrapper({question}) {
     // console.log(answers.length)
@@ -9,7 +10,10 @@ export default function Questionwrapper({question}) {
                 <Box bg='#5eba7d' color='#ffffea'>{question.answers.length} answers</Box>
             </Box>
             <Box w='100%' align='left'>
-                <Heading as='h4' size='xs' color='#0a95ff'>Q: {question.title}</Heading>
+                <Link
+                    to = {`/question/${question._id}`}
+                    state = {{question: {question}}}
+                ><Heading as='h4' size='xs' color='#0a95ff'>Q: {question.title}</Heading></Link>
                 <Box><Text>{question.body}</Text></Box>
             </Box>
             <br/><br/><br/><br/>

@@ -1,6 +1,8 @@
-import { Box, Flex, Heading, Text, HStack } from "@chakra-ui/react"
+import { Box, Flex, Heading, Text, HStack , Grid, GridItem,Input, InputGroup, InputLeftElement, IconButton} from "@chakra-ui/react"
 import {Outlet,Link} from 'react-router-dom'
 import {ArrowDownIcon,ArrowUpIcon} from '@chakra-ui/icons';
+import {DeleteIcon} from '@chakra-ui/icons'
+import {BiUpvote, BiDownvote, BiSend, BiDelete, BiEdit} from "react-icons/bi"
 
 export default function Questionwrapper({question}) {
     
@@ -22,6 +24,11 @@ export default function Questionwrapper({question}) {
             </Box>
             <br/><br/><br/><br/>
             <Box>Posted at {date.getHours()}:{date.getMinutes()} on {date.toLocaleString('default', { month: 'long' })} {date.getDate()}, {date.getFullYear()} by {question.postedBy.fullName} ({question.postedBy.username})</Box> 
+            <Grid templateColumns='repeat(2, 1fr)'>
+                                <GridItem colStart={2}  ><IconButton w='8' icon={<BiEdit/>}  /></GridItem>
+                                <GridItem colStart={3} margin ="1px"><IconButton w='8' icon={<DeleteIcon/>} /></GridItem>
+                            </Grid>
         </HStack>
+        
     )
 }

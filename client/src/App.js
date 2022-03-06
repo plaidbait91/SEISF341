@@ -34,11 +34,8 @@ function App() {
 
         <Flex justify="space-around" w="20%" align="center">
         <InputGroup borderColor={"white"}>
-          <InputLeftElement
-            pointerEvents='none'
-            children={<IconButton aria-label='Search' icon={<BiSearch />} colorScheme="red.400" />}
-          />
           <Input placeholder=' Search...' color='white.300' _placeholder={{ color: 'white' }} />
+          <IconButton aria-label='Search' icon={<BiSearch />} colorScheme="red.400" /> 
         </InputGroup>
         </Flex>
       </Flex>

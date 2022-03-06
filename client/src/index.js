@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {BrowserRouter, Routes, Route} from 'react-router-dom'
 import Home from './pages/Home'
 import Question from './/components/Question'
 import {ChakraProvider} from '@chakra-ui/react'
@@ -11,14 +10,7 @@ import {ChakraProvider} from '@chakra-ui/react'
 ReactDOM.render(
   <React.StrictMode>
     <ChakraProvider>
-      <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} >
-          <Route path="/home" element={<Home/>} />
-          <Route path="/question/:id" element={<Question />} />
-        </Route>
-      </Routes>     
-      </BrowserRouter>
+      <App/>
     </ChakraProvider>
   </React.StrictMode>,
   document.getElementById('root')

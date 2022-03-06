@@ -3,7 +3,8 @@ import Login from './Login';
 import Logout from './Logout';
 import {useState} from 'react' ;
 import {Outlet,Link} from 'react-router-dom'
-import {Text, Heading, Flex, Link as LinkC} from '@chakra-ui/react'
+import {Text, Heading, Flex, Link as LinkC, Button, Input, InputGroup, InputLeftElement} from '@chakra-ui/react'
+import {SearchIcon} from '@chakra-ui/icons'
 
 function App() {
   const [name, setName] = useState();
@@ -17,7 +18,6 @@ function App() {
   return (
     <div className="App">
       <Flex direction="row"
-        align="center"
         bgColor="red.400"
         h="8vh"
         w="full"
@@ -25,33 +25,46 @@ function App() {
         textColor="white"
         justify="space-evenly"
 >
-        <Flex justify="space-around" w="10%">
+        <Flex justify = "space-around" w="20%" align="center"  >
         <Text ><Link  to="/" mr={5}><LinkC>Root</LinkC></Link> </Text>
         <Text>|</Text>
         <Text> <Link to="/home" ml={5}><LinkC>Home</LinkC></Link></Text>
+        </Flex>
+
+        <Flex justify="space-around" w="20%" align="center">
+        <InputGroup>
+          <InputLeftElement
+            pointerEvents='none'
+            children={<SearchIcon color='white.300' />}
+          />
+          <Input placeholder='Search...' color='white.300' _placeholder={{ color: 'white' }} />
+        </InputGroup>
         </Flex>
       </Flex>
       <Heading
             lineHeight={1.1}
             fontWeight={600}
-            fontSize={{ base: '3xl', sm: '4xl', lg: '6xl' }}>
+            // fontSize={{ base: '3xl', sm: '4xl', lg: '6xl' }}
+            >
             <Text
               as={'span'}
+              fontSize={{ base: '3xl', sm: '4xl', lg: '6xl' }}
               position={'relative'}
               _after={{
                 content: "''",
                 width: 'full',
-                height: '30%',
+                height: '25%',
                 position: 'absolute',
                 bottom: 1,
                 left: 0,
                 bg: 'red.400',
                 zIndex: -1,
-              }}>
+              }}
+              fontStyle={'italic'}>
               🅖Overflow
             </Text>
             {" "}
-            <Text as={'span'} color={'red.400'}>
+            <Text as={'span'} color={'red.400'} fontSize={{ base: '2xl', sm: '3xl', lg: '5xl' }}>
               your QnA Forum!
             </Text>
             <br/><br/>

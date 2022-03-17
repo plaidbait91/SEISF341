@@ -47,16 +47,16 @@ app.get('/all-questions',(req,res)=>{
   })
 });
  
-app.get('/login', (req, res) => {
-  let name = req.query.name
-  let email = req.query.email
- 
+app.post('/login', (req, res) => {
+  let name = req.body.name
+  let email = req.body.email
+  console.log(name,email);
   User.findOne({ fullName: name, email: email }, (err, doc) => {
     if(err) {
       return console.log(err)
     }
  
-    const payload = {}
+    let payload = {}
  
     if(doc) {
  
@@ -80,10 +80,11 @@ app.get('/login', (req, res) => {
             name: result.fullName,
             email: result.email
           }
- 
+          console.log("reached payload");
         })
         .catch(err => {
-          res.send( { error: err } )
+          console.log(err);
+        //  return res.send( { error: err } )
         })
  
     }

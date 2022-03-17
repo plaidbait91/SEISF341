@@ -1,8 +1,67 @@
-import {Text, Heading, Flex, Link as LinkC, Button, Input, InputGroup, InputLeftElement, IconButton} from '@chakra-ui/react'
-import {Outlet,Link} from 'react-router-dom'
+import {Text, Heading, Flex, Link as LinkC, Button, Input, InputGroup, InputLeftElement, IconButton,Image} from '@chakra-ui/react'
+import {Link} from 'react-router-dom'
 import {SearchIcon} from '@chakra-ui/icons'
+import {useEffect, useState} from 'react' ;
+
+import React from 'react' ;
+import {GoogleLogin,GoogleLogout} from 'react-google-login' ;
+// refresh token
+import {refreshTokenSetup} from '../utils/refreshToken' ;
+// import { appendFile } from 'fs';
+import axios from 'axios';
+
+const clientId = '980895739592-obqt1v1p1vng0co9bfdnkr0r3pff4kp3.apps.googleusercontent.com' ;
+
+
 
 export default function Navbar(){
+
+  const [showloginButton, setShowloginButton] = useState(true);
+  const [showlogoutButton, setShowlogoutButton] = useState(false);
+  const [name, setName] = useState();
+  const [email, setEmail] = useState();
+  const [pplink, setPPLink] = useState();
+
+  const sendDeets = async (name,email)=>{
+    console.log(name,email);
+    axios.post("/login", {name,email})
+    .then((res)=>{
+      console.log(res);
+      // localStorage.setItem('jwtToken',res.data.token);
+      // console.log(localStorage.getItem('jwtToken'));
+    })
+  }
+
+  const onLoginSuccess = (res) => {
+    console.log('INSIDE LOGIN SUCCESS FUNCTION')
+    console.log('profile object: ', res.profileObj);
+    setPPLink(res.profileObj.imageUrl);
+    console.log('PROFILE_PICTURE: ',pplink);
+    setName(res.profileObj.name)
+    console.log('NAME: ', res.profileObj.name);
+    setEmail(res.profileObj.email);
+    console.log('EMAIL: ', res.profileObj.email);
+
+    refreshTokenSetup(res);
+    setShowloginButton(false);
+    setShowlogoutButton(true);
+    sendDeets(res.profileObj.name,res.profileObj.email);
+};
+
+const onLoginFailure = (res) => {
+  console.log('Login Failed:', res);
+};
+
+const onSignoutSuccess = () => {
+  alert("You have been logged out successfully");
+  console.clear();
+  setPPLink();
+  setEmail();
+  setName();
+  setShowloginButton(true);
+  setShowlogoutButton(false);
+};
+
     return(
         <>
         <Flex direction="row"
@@ -27,6 +86,33 @@ export default function Navbar(){
           />
           <Input placeholder=' Search...' color='white.300' _placeholder={{ color: 'white' }} />
         </InputGroup>
+        </Flex>
+        <Flex justify="right" w="40%" align="center">
+          { showloginButton ?
+                <GoogleLogin
+                    clientId={clientId}
+                    buttonText="Sign In"
+                    onSuccess={onLoginSuccess}
+                    onFailure={onLoginFailure}
+                    cookiePolicy={'single_host_origin'}
+                    isSignedIn={true}
+                /> : null}
+
+            { showlogoutButton ?
+                <GoogleLogout
+                    clientId={clientId}
+                    buttonText="Sign Out"
+                    onLogoutSuccess={onSignoutSuccess}
+                >
+                </GoogleLogout> : null
+            }
+          <Image
+          ml={5}
+            borderRadius='full'
+            boxSize='50px'
+            src={pplink}
+            alt={name}
+            /> 
         </Flex>
       </Flex>
       <Heading

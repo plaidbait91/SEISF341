@@ -5,18 +5,20 @@ import {refreshTokenSetup} from './utils/refreshToken' ;
 
 const clientId = '980895739592-obqt1v1p1vng0co9bfdnkr0r3pff4kp3.apps.googleusercontent.com' ;
 
-function Login({childToParent}) {
+function Login({childToParent,handleLoginStatus}) {
     // const [name, setName] = useState();
     // const [email, setEmail] = useState();
     // const [pplink, setPPLink] = useState();
     const onSuccess = (res) => {
         childToParent(res.profileObj.name, res.profileObj.email, res.profileObj.imageUrl);
+        handleLoginStatus(true);
         //initializing the setup
         refreshTokenSetup(res);
     };
 
     const onFailure = (res) => {
         console.log('[Login failed] res:', res);
+        handleLoginStatus(false);
     };
 
     return (

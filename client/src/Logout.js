@@ -3,9 +3,10 @@ import {GoogleLogout} from 'react-google-login' ;
 
 const clientId = '980895739592-obqt1v1p1vng0co9bfdnkr0r3pff4kp3.apps.googleusercontent.com' ;
 
-function Logout({childToParent}) {
+function Logout({childToParent,handleLoginStatus}) {
     const onSuccess = () => {
         childToParent("", "", "");
+        handleLoginStatus(false);
         alert('Logout made successfully');
     };
 

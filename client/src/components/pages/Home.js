@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import { Button, Container, VStack,  StackDivider} from "@chakra-ui/react";
-import Questionwrapper from "../components/Questionwrapper";
+import Questionwrapper from '../Questionwrapper'
 
 
 export default function Home() {

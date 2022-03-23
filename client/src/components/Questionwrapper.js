@@ -23,7 +23,7 @@ export default function Questionwrapper({question}) {
                 <Box><Text>{question.body}</Text></Box>
             </Box>
             <br/><br/><br/><br/>
-            <Box>Posted at {date.getHours()}:{date.getMinutes()} on {date.toLocaleString('default', { month: 'long' })} {date.getDate()}, {date.getFullYear()} by {question.postedBy.fullName} ({question.postedBy.username})</Box> 
+            <Box>Posted at {date.getHours()}:{date.getMinutes()} on {date.toLocaleString('default', { month: 'long' })} {date.getDate()}, {date.getFullYear()} by {question.postedBy.fullName}</Box> 
             <Grid templateColumns='repeat(2, 1fr)'>
                                 <GridItem colStart={2}  ><IconButton w='8' icon={<BiEdit/>}  /></GridItem>
                                 <GridItem colStart={3} margin ="1px"><IconButton w='8' icon={<DeleteIcon/>} /></GridItem>

@@ -24,8 +24,7 @@ export default function Home() {
                     align='stretch'>
                {
                    questions.map(question =>(
-                    //    <li key={question._id}>{question.title} </li>
-                    <Questionwrapper question={question}  ></Questionwrapper>
+                    <Questionwrapper key={question._id} question={question}  ></Questionwrapper>
                    ))
                }
                </VStack>

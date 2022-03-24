@@ -1,5 +1,6 @@
 import { Grid, GridItem, Heading, Textarea, Input, Button } from "@chakra-ui/react";
 import { useState } from "react";
+import axios from 'axios';
 
 const Ask = () => {
     
@@ -7,14 +8,10 @@ const Ask = () => {
     const [body, setBody] = useState('')
 
     const askq = (e) => {
-        const question = {title, body, upvotes:0, reports:0}
-        fetch('http://localhost:5000/ask', {
-            credentials: 'include',
-            method: 'POST',
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(question)
-        }).then(() => {
+        const question = {title, body, upvotes:0, reports:0, postedBy: {fullName: "RUBAN S", email: "f20190097@hyderabad.bits-pilani.ac.in"}}
+        axios.post('/ask', question).then((err) => {
             console.log('new question added')
+            console.log("Status:",err);
         })
     }
 

@@ -1,8 +1,7 @@
-import { Box, Flex, Heading, Text, HStack , Grid, GridItem,Input, InputGroup, InputLeftElement, IconButton} from "@chakra-ui/react"
-import {Outlet,Link} from 'react-router-dom'
-import {ArrowDownIcon,ArrowUpIcon} from '@chakra-ui/icons';
+import { Box, Heading, Text, HStack , Grid, GridItem,IconButton} from "@chakra-ui/react"
+import {Link} from 'react-router-dom'
 import {DeleteIcon} from '@chakra-ui/icons'
-import {BiUpvote, BiDownvote, BiSend, BiDelete, BiEdit} from "react-icons/bi"
+import {BiEdit} from "react-icons/bi"
 
 export default function Questionwrapper({question}) {
     
@@ -21,6 +20,10 @@ export default function Questionwrapper({question}) {
                     size= '10px'
                 ><Heading as='h4' size='s' color='#0a95ff'>Q: {question.title}</Heading></Link>
                 <Box><Text>{question.body}</Text></Box>
+                <Grid display="flex">
+                    Tags:
+                    {question.tags.map(tag => <GridItem margin="3px" display="flex" borderRadius="5px" borderWidth="2px" w={(tag.length*2).toString()+"%"}>{tag}</GridItem>)}
+                </Grid>
             </Box>
             <br/><br/><br/><br/>
             <Box>Posted at {date.getHours()}:{date.getMinutes()} on {date.toLocaleString('default', { month: 'long' })} {date.getDate()}, {date.getFullYear()} by {question.postedBy.fullName}</Box> 

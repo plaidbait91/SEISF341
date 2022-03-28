@@ -3,8 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Home from './pages/Home'
-import Question from './/components/Question'
 import {ChakraProvider} from '@chakra-ui/react'
 
 ReactDOM.render(

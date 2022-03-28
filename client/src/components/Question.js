@@ -42,6 +42,10 @@ const Question = () => {
                 <Text align="left">{question.body}</Text>
             </GridItem>
 
+            <GridItem display="flex">
+            {question.tags.map(tag => <GridItem margin="3px" display="flex" borderRadius="5px" borderWidth="2px" w={(tag.length*2).toString()+"%"}>{tag}</GridItem>)}
+            </GridItem>
+
             {/* Answer a Question */}
             <GridItem colSpan={3} bg='' borderWidth='3px' borderRadius='20' padding={2}>
             <InputGroup  >

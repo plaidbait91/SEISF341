@@ -13,7 +13,8 @@ const _ = require('./models/user');
 const User = _.User
  
 const app = express();
-app.use(cors());
+app.use(express.json())
+app.use(cors({origin: "http://localhost:3000"}));
 // connect to mongoDB atlas using mongoose
 mongoose.connect( process.env.MONGODB_API_URI,
   {
@@ -29,7 +30,7 @@ db.once("open", function () {
 	console.log("MongoDB Atlas Connection Successful");
   });
  
-app.use(express.json())
+
  
   // Basic endpoint of the backend
 app.get('/',(req,res)=>{

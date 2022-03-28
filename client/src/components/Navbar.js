@@ -21,6 +21,7 @@ export default function Navbar(){
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [pplink, setPPLink] = useState();
+  const [searchTerm, setSearchTerm] = useState();
 
   const sendDeets = async (name,email)=>{
     // console.log(name,email);
@@ -78,6 +79,8 @@ const onSignoutSuccess = () => {
         <Text ><Link  to="/" mr={5}>Home</Link> </Text>
         <Text>|</Text>
         <Text> <Link to="/profile" ml={5}>Profile</Link></Text>
+        <Text>|</Text>
+        <Text> <Link to="/askquestion" ml={5}>Post Question</Link></Text>
         </Flex>
 
         <Flex justify="space-around" w="20%" align="center">
@@ -86,7 +89,15 @@ const onSignoutSuccess = () => {
             pointerEvents='none'
             children={<IconButton aria-label='Search' icon={<SearchIcon />} colorScheme="red.400" />}
           />
-          <Input placeholder=' Search...' color='white.300' _placeholder={{ color: 'white' }} />
+          <Input placeholder=' Search...' color='white.300' _placeholder={{ color: 'white' }}
+                  onKeyPress={e => 
+                    {
+                      if(e.key == 'Enter')
+                        console.log(searchTerm)
+                    }
+                  }
+                  onChange={e => setSearchTerm(e.target.value)}
+            />
         </InputGroup>
         </Flex>
         <Flex justify="right" w="40%" align="center">

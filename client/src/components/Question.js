@@ -1,5 +1,5 @@
 import { useLocation, useParams } from "react-router-dom";
-import { Box, Flex, Heading, Text, HStack, Grid, GridItem,Input, InputGroup, InputLeftElement, IconButton } from "@chakra-ui/react"
+import { Box, Flex, Heading, Text, HStack, Grid, GridItem,Input, InputGroup, InputLeftElement, IconButton, Textarea } from "@chakra-ui/react"
 import {DeleteIcon} from '@chakra-ui/icons'
 import {BiUpvote, BiDownvote, BiSend, BiDelete, BiEdit} from "react-icons/bi"
 
@@ -30,7 +30,7 @@ const Question = () => {
                 </GridItem>
                 </Grid>
             </GridItem>
-            <GridItem colStart={2} colEnd={4} bg='papayawhip' borderWidth='2px' borderRadius='5' padding={2}  >
+            <GridItem colSpan={2} bg='papayawhip' borderWidth='2px' borderRadius='5' padding={2}  >
                 <Heading as='h4' size='lg' align='left'>{question.title} </Heading>
             </GridItem>
             <GridItem colSpan={1} bg='white' shadow='sm' borderWidth='2px' flex='1' borderRadius='sm'  padding={2}>
@@ -38,19 +38,24 @@ const Question = () => {
             </GridItem>
 
             {/* Question Body */}
-            <GridItem colSpan={5} bg='yellow.100' borderWidth='2px' borderRadius='5' padding={2}>
+            <GridItem colSpan={7} bg='yellow.100' borderWidth='2px' borderRadius='5' padding={2}>
                 <Text align="left">{question.body}</Text>
             </GridItem>
 
-            <GridItem display="flex">
-            {question.tags.map(tag => <GridItem margin="3px" display="flex" borderRadius="5px" borderWidth="2px" w={(tag.length*2).toString()+"%"}>{tag}</GridItem>)}
+            <GridItem colSpan={10}>
+                <Heading align="left" size='md'>Tags</Heading>
+            </GridItem>
+
+            {/* Tags */}
+            <GridItem overflowY="auto" maxHeight="100px" colSpan={1}>
+            {question.tags.map(tag => <GridItem margin="3px" display="flex" borderRadius="5px" borderWidth="2px" >{tag}</GridItem>)}
             </GridItem>
 
             {/* Answer a Question */}
-            <GridItem colSpan={3} bg='' borderWidth='3px' borderRadius='20' padding={2}>
-            <InputGroup  >
+            <GridItem colSpan={5} bg='' borderWidth='3px' borderRadius='20' padding={2}>
+            <InputGroup >
             <IconButton aria-label='Answer' textColor={"gray"} icon={<BiSend />} color="yellow.1000"  />
-                <Input placeholder=' Answer...' color='white.300' _placeholder={{ color: 'black' }} />
+                <Textarea marginLeft="5px" placeholder=' Answer...' color='white.300' _placeholder={{ color: 'black' }} />
                 </InputGroup>
             </GridItem>
             
@@ -61,12 +66,14 @@ const Question = () => {
                         <GridItem margin='8px'
                         padding={8}
                         shadow='md' borderWidth='2px' flex='1' borderRadius='lg'>
+                            
+                            <Text align="left" flexWrap="wrap">{answer.body}</Text>
+                            
                             <Grid templateColumns='repeat(2, 1fr)'>
                                 <GridItem colStart={2} marginLeft="650px" ><IconButton w='8' icon={<BiEdit/>}  /></GridItem>
                                 <GridItem colStart={3} margin ="1px"><IconButton w='8' icon={<DeleteIcon/>} /></GridItem>
                             </Grid>
-                            <Text align="left">{answer.body}</Text>
-                            
+
                             <Grid templateColumns='repeat(2, 1fr)'>
                                 <GridItem colStart={2}><Text align="right" fontSize="3xl">{answer.upvotes}</Text></GridItem>
                                 <GridItem colStart={2} marginLeft="650px"><IconButton w='8' icon={<BiUpvote/>} colorScheme="green" /></GridItem>

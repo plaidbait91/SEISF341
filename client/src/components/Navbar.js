@@ -24,24 +24,26 @@ export default function Navbar(){
   const [searchTerm, setSearchTerm] = useState();
 
   const sendDeets = async (name,email)=>{
-    console.log(name,email);
+    // console.log(name,email);
     axios.post("/login", {name,email})
     .then((res)=>{
-      console.log(res);
-      // localStorage.setItem('jwtToken',res.data.token);
+      // console.log(res);
+      localStorage.setItem('jwtToken',res.data.token);
       // console.log(localStorage.getItem('jwtToken'));
     })
   }
 
   const onLoginSuccess = (res) => {
-    console.log('INSIDE LOGIN SUCCESS FUNCTION')
-    console.log('profile object: ', res.profileObj);
+    // console.log('INSIDE LOGIN SUCCESS FUNCTION')
     setPPLink(res.profileObj.imageUrl);
-    console.log('PROFILE_PICTURE: ',pplink);
     setName(res.profileObj.name)
-    console.log('NAME: ', res.profileObj.name);
     setEmail(res.profileObj.email);
+    localStorage.setItem('pplink',res.profileObj.imageUrl);
+    console.log('PROFILE_OBJECT: ', res.profileObj);
+    console.log('PROFILE_PICTURE: ',res.profileObj.imageUrl);
+    console.log('NAME: ', res.profileObj.name);
     console.log('EMAIL: ', res.profileObj.email);
+
 
     refreshTokenSetup(res);
     setShowloginButton(false);
@@ -74,11 +76,11 @@ const onSignoutSuccess = () => {
         justify="space-evenly"
 >
         <Flex justify = "space-around" w="20%" align="center"  >
-        <Text ><Link  to="/" mr={5}><LinkC>Home</LinkC></Link> </Text>
+        <Text ><Link  to="/" mr={5}>Home</Link> </Text>
         <Text>|</Text>
-        <Text> <Link to="/profile" ml={5}><LinkC>Profile</LinkC></Link></Text>
+        <Text> <Link to="/profile" ml={5}>Profile</Link></Text>
         <Text>|</Text>
-        <Text> <Link to="/askquestion" ml={5}><LinkC>Post Question</LinkC></Link></Text>
+        <Text> <Link to="/askquestion" ml={5}>Post Question</Link></Text>
         </Flex>
 
         <Flex justify="space-around" w="20%" align="center">

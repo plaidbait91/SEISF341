@@ -23,7 +23,16 @@ const answerSchema = new Schema({
     reports: {
         type: Number,
         default: 0
-    }
+    },
+
+    approved: {
+        type: Boolean,
+        default: false
+    },
+
+    upvoteList: [String],
+
+    downvoteList: [String]
     
 }, { timestamps: true })
 

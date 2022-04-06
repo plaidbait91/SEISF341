@@ -22,7 +22,7 @@ export default function Questionwrapper({question}) {
                 <Box><Text>{question.body}</Text></Box>
                 <Grid display="flex">
                     Tags:
-                    {question.tags.map(tag => <GridItem margin="3px" display="flex" borderRadius="5px" borderWidth="2px" w={(tag.length*2).toString()+"%"}>{tag.name}</GridItem>)}
+                    {question.tags.map(tag => <GridItem margin="3px" display="flex" borderRadius="5px" borderWidth="2px" w={(tag.length*2).toString()+"%"}>{tag}</GridItem>)}
                 </Grid>
             </Box>
             <br/><br/><br/><br/>

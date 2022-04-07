@@ -8,11 +8,16 @@ const Ask = () => {
     const [body, setBody] = useState('')
 
     const askq = (e) => {
-        const question = {title, body, upvotes:0, reports:0, postedBy: {fullName: "RUBAN S", email: "f20190097@hyderabad.bits-pilani.ac.in"}}
-        axios.post('/ask', question).then((err) => {
+        const question = { title, body }
+        axios.post('/ask', question, { headers : {
+            'x-access-token': localStorage.getItem('jwtToken') 
+        } }).then((err) => {
             console.log('new question added')
             console.log("Status:",err);
         })
+
+        setTitle('')
+        setBody('')
     }
 
     return ( 

@@ -4,19 +4,7 @@ import { Button, Container, VStack,  StackDivider} from "@chakra-ui/react";
 import Questionwrapper from '../components/Questionwrapper'
 
 
-export default function Home() {
-    const [questions,setQuestions] = useState([]);
-    useEffect(()=>{
-        axios.get('http://localhost:5000/all-questions')
-        .then(res=>{
-            console.log(res);
-            setQuestions(res.data);
-            console.log(questions)
-        })
-        .catch(err=>{
-            console.error(err);
-        })
-    },[])
+export default function Home({ questions }) {
     
     return(
         <div>
@@ -25,9 +13,14 @@ export default function Home() {
                     spacing={4}
                     align='stretch'>
                {
+                   (questions.length > 0) ?
                    questions.map(question => 
                     <Questionwrapper key={question._id} question = {question} />
                    )
+
+                   :
+                   
+                   <p>Your query did not return any results!</p>
                }
                </VStack>
             </Container>

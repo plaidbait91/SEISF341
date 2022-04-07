@@ -14,14 +14,13 @@ const clientId = '980895739592-obqt1v1p1vng0co9bfdnkr0r3pff4kp3.apps.googleuserc
 
 
 
-export default function Navbar(){
+export default function Navbar({ setter, search, searcher }){
 
   const [showloginButton, setShowloginButton] = useState(true);
   const [showlogoutButton, setShowlogoutButton] = useState(false);
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [pplink, setPPLink] = useState();
-  const [searchTerm, setSearchTerm] = useState();
 
   const sendDeets = async (name,email)=>{
     // console.log(name,email);
@@ -93,10 +92,11 @@ const onSignoutSuccess = () => {
                   onKeyPress={e => 
                     {
                       if(e.key == 'Enter')
-                        console.log(searchTerm)
+                        searcher()
                     }
                   }
-                  onChange={e => setSearchTerm(e.target.value)}
+                  value={search}
+                  onChange={e => setter(e.target.value)}
             />
         </InputGroup>
         </Flex>

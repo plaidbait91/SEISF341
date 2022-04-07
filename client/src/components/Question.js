@@ -9,6 +9,7 @@ const Question = () => {
     const {id} = useParams()
     const location = useLocation()
     const [question, setQuestion] = useState()
+    const [answer, setAnswer] = useState('')
 
     useEffect(()=>{
         axios.get(`http://localhost:5000/q/${id}`)
@@ -86,6 +87,22 @@ const Question = () => {
         })
     }
 
+    const postAnswer = () => {
+        const ans = { body: answer }
+
+        axios.post(`http://localhost:5000/answer/${id}`, ans, { headers : {
+            'x-access-token': localStorage.getItem('jwtToken') 
+        } }).then(res => {
+            console.log(res);
+            setQuestion(res.data);
+        })
+        .catch(err=>{
+            console.error(err);
+        })
+
+        setAnswer('')
+    }
+
     return ( 
         <div>
             { question && (
@@ -130,8 +147,9 @@ const Question = () => {
             {/* Answer a Question */}
             <GridItem colSpan={3} bg='' borderWidth='3px' borderRadius='20' padding={2}>
             <InputGroup  >
-            <IconButton aria-label='Answer' textColor={"gray"} icon={<BiSend />} color="yellow.1000"  />
-                <Input placeholder=' Answer...' color='white.300' _placeholder={{ color: 'black' }} />
+            <IconButton aria-label='Answer' textColor={"gray"} icon={<BiSend />} color="yellow.1000" onClick={postAnswer} />
+                <Input placeholder=' Answer...' color='white.300' 
+                _placeholder={{ color: 'black' }} value={answer} onChange={(e) => setAnswer(e.target.value)}/>
                 </InputGroup>
             </GridItem>
                 

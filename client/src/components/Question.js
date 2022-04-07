@@ -2,6 +2,8 @@ import { useLocation, useParams } from "react-router-dom";
 import { Box, Flex, Heading, Text, HStack, Grid, GridItem,Input, InputGroup, InputLeftElement, IconButton } from "@chakra-ui/react"
 import {DeleteIcon} from '@chakra-ui/icons'
 import {BiUpvote, BiDownvote, BiSend, BiDelete, BiEdit} from "react-icons/bi"
+import {FcCheckmark} from "react-icons/fc"
+import {MdOutlineReportProblem} from "react-icons/md"
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -160,9 +162,11 @@ const Question = () => {
                             <GridItem margin='8px'
                             padding={8}
                             shadow='md' borderWidth='2px' flex='1' borderRadius='lg'>
-                                <Grid templateColumns='repeat(2, 1fr)'>
-                                    <GridItem colStart={2} marginLeft="650px" ><IconButton w='8' icon={<BiEdit/>}  /></GridItem>
-                                    <GridItem colStart={3} margin ="1px"><IconButton w='8' icon={<DeleteIcon/>} onClick={() => downAns(answer._id)}/></GridItem>
+                                <Grid templateColumns='repeat(3, 1fr)'>
+                                    <GridItem colStart={1} marginLeft="650px" ><IconButton w='8' icon={<FcCheckmark/>}  /></GridItem>
+                                    <GridItem colStart={2}  ><IconButton w='8' icon={<BiEdit/>}  /></GridItem>
+                                    <GridItem colStart={3} ><IconButton w='8' icon={<DeleteIcon/>} /></GridItem>
+                                    <GridItem colStart={4} ><IconButton w='8' icon={<MdOutlineReportProblem/>} /></GridItem>
                                 </Grid>
                                 <Text align="left">{answer.body}</Text>
                                 

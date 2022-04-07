@@ -511,7 +511,8 @@ app.get('/search', (req, res) => {
   Question.find({ $or: [
     { body: { $regex: searchRegex, $options: 'i' } },
     { title: { $regex: searchRegex, $options: 'i' } },
-    { answers: { $elemMatch: { body: { $regex: searchRegex, $options: 'i' } } } }
+    { answers: { $elemMatch: { body: { $regex: searchRegex, $options: 'i' } } } },
+    { tags: { $regex: searchRegex, $options: 'i' } }
   ]})
   .then(result => {
     res.send(result)

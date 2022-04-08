@@ -4,7 +4,7 @@ import { Button, Container, VStack,  StackDivider} from "@chakra-ui/react";
 import Questionwrapper from '../components/Questionwrapper'
 
 
-export default function Home({ questions }) {
+export default function Home({ questions, email, deleter }) {
     
     return(
         <div>
@@ -15,7 +15,7 @@ export default function Home({ questions }) {
                {
                    (questions.length > 0) ?
                    questions.map(question => 
-                    <Questionwrapper key={question._id} question = {question} />
+                    <Questionwrapper key={question._id} question = {question} email = {email} deleter = {deleter} />
                    )
 
                    :

@@ -12,6 +12,7 @@ function App() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [questions, setQuestions] = useState([]);
+  const [email, setEmail] = useState('')
 
   const setter = (x) => {
     setSearchTerm(x);
@@ -35,15 +36,26 @@ function App() {
         })
   }
 
+  const delQ = (id) => {
+    axios.delete(`http://localhost:5000/q/${id}`, { headers : {
+      'x-access-token': localStorage.getItem('jwtToken') 
+      } })
+      .then(res => {
+        console.log(res);
+        searcher();
+      })
+
+  }
+
 
 
   return (
     <div className="App">
       <Router>
-        <Navbar setter = {setter} search = {searchTerm} searcher = { searcher }/>
+        <Navbar setter = {setter} search = {searchTerm} searcher = { searcher } login = { setEmail }/>
         <Routes>
-        <Route path="/" element={<Home questions = {questions}/>} />
-          <Route path="/question/:id" element={<Question/>}/>
+        <Route path="/" element={<Home questions = {questions} email = { email } deleter = { delQ }/>} />
+          <Route path="/question/:id" element={<Question email = { email }/>}/>
           <Route path="/profile" element={<Profile/>}/>
           <Route path="/askquestion" element={<Ask />}></Route>
         </Routes>

@@ -2,11 +2,13 @@ import { Box, Heading, Text, HStack , Grid, GridItem,IconButton} from "@chakra-u
 import {Link} from 'react-router-dom'
 import {DeleteIcon} from '@chakra-ui/icons'
 import {BiEdit} from "react-icons/bi"
+import { useState } from "react"
 import Navbar from "./Navbar"
 
-export default function Questionwrapper({question}) {
+export default function Questionwrapper({question, email, deleter }) {
     
     const date = new Date(question.createdAt)
+
     // console.log(date)
     return(
         <HStack  flexDirection='row' p={5} shadow='md' borderWidth='1px' flex='1' borderRadius='lg' >
@@ -29,8 +31,8 @@ export default function Questionwrapper({question}) {
             <br/><br/><br/><br/>
             <Box>Posted at {date.getHours()}:{date.getMinutes()} on {date.toLocaleString('default', { month: 'long' })} {date.getDate()}, {date.getFullYear()} by {question.postedBy.email}</Box> 
             <Grid templateColumns='repeat(2, 1fr)'>
-                                {<GridItem colStart={2}  ><IconButton w='8' icon={<BiEdit/>}  /></GridItem>}
-                                <GridItem colStart={3} margin ="1px"><IconButton w='8' icon={<DeleteIcon/>} /></GridItem>
+                                {(email == question.postedBy.email) ? <GridItem colStart={2}  ><IconButton w='8' icon={<BiEdit/>}  /></GridItem> : <></>}
+                                {(email == question.postedBy.email) ? <GridItem colStart={3} margin ="1px"><IconButton w='8' icon={<DeleteIcon/>} onClick = {() => deleter(question._id)}/></GridItem> : <></>}
 
                             </Grid>
         </HStack>

@@ -431,6 +431,7 @@ app.put('/downvote/:question', auth, (req, res) => {
 
 app.put('/report/:question', auth, (req, res) => {
   const qId = req.params.question
+  const uId = req.user.email
   let ans = req.query.ans
 
   Question.findById(qId)
@@ -439,22 +440,42 @@ app.put('/report/:question', auth, (req, res) => {
     let doc = result;
  
     if(result) {
+ 
       if(ans) {
  
+        let found = false;
         doc.answers = doc.answers.map(item => {
           let x = item
-
-          if(item._id == ans) x.reports++;
  
-          return x;
+          if(item._id == ans) {
+            found = true;
+            let temp = x.reportList
+            x.reportList = x.reportList.filter(id => id != uId)
+
+            if(temp.length == x.reportList.length) x.reportList.push(uId) 
+
+            x.reports += x.reportList.length - temp.length
+          } 
+ 
+          return x
         })
  
+        if(!found) return res.status(404).send({error: 'Answer not found'})
+
       }
  
-      else doc.reports++;
+      else {
+        let temp = doc.reportList
+        doc.reportList = doc.reportList.filter(id => id != uId)
+
+        if(temp.length == doc.reportList.length) doc.reportList.push(uId) 
+
+        doc.reports += doc.reportList.length - temp.length
+      }
  
       doc.save()
       res.send(doc)
+ 
     }
     else {
       res.status(404).json({error: 'Question not found'})
@@ -479,7 +500,7 @@ app.put('/approve/:question/:answer', auth, (req, res) => {
         doc.answers = doc.answers.map(item => {
           let x = item
   
-          if(item._id == ans) x.approved = true;
+          if(item._id == ans) x.approved = !x.approved;
   
           return x
         })

@@ -11,6 +11,18 @@ const userSchema = new Schema({
     email: {
         type: String,
         required: true
+    },
+
+    questions: [String],
+
+    answers: [{
+        qId: String,
+        aId: String
+    }],
+
+    upvotes: {
+        type: Number,
+        default: 0
     }
     
 })

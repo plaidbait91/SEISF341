@@ -122,6 +122,15 @@ app.post('/ask', auth, (req, res) => {
  
   question.save()
     .then(result => {
+
+      User.findOneAndUpdate({ email : req.user.email }, {
+        $push: { "questions" : result._id}
+      }, function(err, res) {
+        if(err) console.log(err);
+
+        console.log(res);
+      })
+
       res.send({
         result
       });
@@ -174,6 +183,20 @@ app.post('/answer/:question', auth, (req, res) => {
     if(result) {
       result.answers.push(ansBody)
       result.save()
+
+      const ans = result.answers[result.answers.length - 1]._id
+      console.log(ans)
+      User.findOneAndUpdate({ email : req.user.email }, {
+        $push: { "answers" : {
+          qId: qId,
+          aId: ans
+        }}
+      }, function(err, res) {
+        if(err) console.log(err);
+
+        console.log(res);
+      })
+
       res.status(200).json(result)
     }
     else {
@@ -207,6 +230,20 @@ app.delete('/q/:question', auth, (req, res) => {
         if(temp.length != doc.answers.length) {
           doc.answers = temp
           doc.save()
+
+          User.findOneAndUpdate({ email : req.user.email }, {
+            $pull: { answers : {
+              qId: qId,
+              aId: ans
+            }},
+
+            $inc: { "upvotes": -doc.upvotes }
+          }, function(err, res) {
+            if(err) console.log(err);
+    
+            console.log(res);
+          })
+          
           res.send(doc)
         }
  
@@ -224,6 +261,16 @@ app.delete('/q/:question', auth, (req, res) => {
       else {
         if(req.user.email == result.postedBy.email) {
           doc.deleteOne()
+
+          User.findOneAndUpdate({ email : req.user.email }, {
+            $pullAll: { "questions" : [qId] },
+            $inc: { "upvotes": -doc.upvotes }
+          }, function(err, res) {
+            if(err) console.log(err);
+    
+            console.log(res);
+          })
+
           res.send(`Question ${doc._id} deleted`)
         }
  
@@ -324,6 +371,7 @@ app.put('/upvote/:question', auth, (req, res) => {
  
           if(item._id == ans) {
             found = true;
+            let old = x.upvotes
             x.downvoteList = x.downvoteList.filter(id => id != uId)
 
             let temp = x.upvoteList.filter(id => id != uId)
@@ -331,6 +379,14 @@ app.put('/upvote/:question', auth, (req, res) => {
 
             x.upvoteList = temp
             x.upvotes = x.upvoteList.length - x.downvoteList.length
+
+            User.findOneAndUpdate({ email : x.postedBy.email }, {
+              $inc: { "upvotes": x.upvotes - old }
+            }, function(err, res) {
+              if(err) console.log(err);
+      
+              console.log(res);
+            })
           } 
  
           return x
@@ -341,6 +397,7 @@ app.put('/upvote/:question', auth, (req, res) => {
       }
  
       else {
+        let old = doc.upvotes
         doc.downvoteList = doc.downvoteList.filter(id => id != uId)
 
         let temp = doc.upvoteList.filter(id => id != uId)
@@ -348,6 +405,15 @@ app.put('/upvote/:question', auth, (req, res) => {
 
         doc.upvoteList = temp
         doc.upvotes = doc.upvoteList.length - doc.downvoteList.length
+
+        User.findOneAndUpdate({ email : doc.postedBy.email }, {
+          $inc: { "upvotes": doc.upvotes - old }
+        }, function(err, res) {
+          if(err) console.log(err);
+  
+          console.log(res);
+        })
+        
       }
  
       doc.save()
@@ -386,6 +452,7 @@ app.put('/downvote/:question', auth, (req, res) => {
  
           if(item._id == ans) {
             found = true;
+            let old = x.upvotes
             x.upvoteList = x.upvoteList.filter(id => id != uId)
 
             let temp = x.downvoteList.filter(id => id != uId)
@@ -393,6 +460,14 @@ app.put('/downvote/:question', auth, (req, res) => {
 
             x.downvoteList = temp
             x.upvotes = x.upvoteList.length - x.downvoteList.length
+
+            User.findOneAndUpdate({ email : x.postedBy.email }, {
+              $inc: { "upvotes": x.upvotes - old }
+            }, function(err, res) {
+              if(err) console.log(err);
+      
+              console.log(res);
+            })
 
           } 
  
@@ -404,6 +479,7 @@ app.put('/downvote/:question', auth, (req, res) => {
       }
  
       else {
+        let old = doc.upvotes
         doc.upvoteList = doc.upvoteList.filter(id => id != uId)
 
         let temp = doc.downvoteList.filter(id => id != uId)
@@ -411,6 +487,14 @@ app.put('/downvote/:question', auth, (req, res) => {
 
         doc.downvoteList = temp
         doc.upvotes = doc.upvoteList.length - doc.downvoteList.length
+
+        User.findOneAndUpdate({ email : doc.postedBy.email }, {
+          $inc: { "upvotes": doc.upvotes - old }
+        }, function(err, res) {
+          if(err) console.log(err);
+  
+          console.log(res);
+        })
       }
  
       doc.save()

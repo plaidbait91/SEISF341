@@ -37,7 +37,9 @@ const questionSchema = new Schema({
 
     upvoteList: [String],
 
-    downvoteList: [String]
+    downvoteList: [String],
+
+    reportList: [String]
     
 }, { timestamps: true })
 

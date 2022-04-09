@@ -7,7 +7,7 @@ import {MdOutlineReportProblem} from "react-icons/md"
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-const Question = () => {
+const Question = ({ email }) => {
     const {id} = useParams()
     const location = useLocation()
     const [question, setQuestion] = useState()
@@ -105,6 +105,21 @@ const Question = () => {
         setAnswer('')
     }
 
+    const deleteAnswer = (ans) => {
+        axios({method: 'delete', url: `http://localhost:5000/q/${id}`, headers : {
+            'x-access-token': localStorage.getItem('jwtToken') 
+        }, params: {
+            ans: ans
+        }})
+        .then(res=> {
+            console.log(res);
+            setQuestion(res.data);
+        })
+        .catch(err=>{
+            console.error(err);
+        })
+    }
+
     return ( 
         <div>
             { question && (
@@ -163,10 +178,11 @@ const Question = () => {
                             padding={8}
                             shadow='md' borderWidth='2px' flex='1' borderRadius='lg'>
                                 <Grid templateColumns='repeat(3, 1fr)'>
-                                    <GridItem colStart={1} marginLeft="650px" ><IconButton w='8' icon={<FcCheckmark/>}  /></GridItem>
-                                    <GridItem colStart={2}  ><IconButton w='8' icon={<BiEdit/>}  /></GridItem>
-                                    <GridItem colStart={3} ><IconButton w='8' icon={<DeleteIcon/>} /></GridItem>
+                                    {(email == question.postedBy.email) ? <GridItem colStart={1} marginLeft="650px" ><IconButton w='8' icon={<FcCheckmark/>} /></GridItem> : null}
+                                    {(email == answer.postedBy.email) ? <GridItem colStart={2}  ><IconButton w='8' icon={<BiEdit/>}  /></GridItem> : null}
+                                    {(email == answer.postedBy.email) ? <GridItem colStart={3} ><IconButton w='8' icon={<DeleteIcon/>} onClick = {() => deleteAnswer(answer._id)} /></GridItem> : null}
                                     <GridItem colStart={4} ><IconButton w='8' icon={<MdOutlineReportProblem/>} /></GridItem>
+                                    
                                 </Grid>
                                 <Text align="left">{answer.body}</Text>
                                 

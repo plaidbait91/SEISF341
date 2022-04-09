@@ -14,7 +14,7 @@ const clientId = '980895739592-obqt1v1p1vng0co9bfdnkr0r3pff4kp3.apps.googleuserc
 
 
 
-export default function Navbar({ setter, search, searcher }){
+export default function Navbar({ setter, search, searcher, login }){
 
   const [showloginButton, setShowloginButton] = useState(true);
   const [showlogoutButton, setShowlogoutButton] = useState(false);
@@ -29,6 +29,8 @@ export default function Navbar({ setter, search, searcher }){
       // console.log(res);
       localStorage.setItem('jwtToken',res.data.token);
       // console.log(localStorage.getItem('jwtToken'));
+      localStorage.setItem('email', email);
+      login(email)
     })
   }
 
@@ -62,6 +64,7 @@ const onSignoutSuccess = () => {
   setName();
   setShowloginButton(true);
   setShowlogoutButton(false);
+  login('');
 };
 
     return(

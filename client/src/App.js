@@ -7,6 +7,8 @@ import Profile from './pages/Profile';
 import Ask from './pages/Ask'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { colours } from 'nodemon/lib/config/defaults';
+import { background } from '@chakra-ui/react';
 
 function App() {
 
@@ -50,7 +52,12 @@ function App() {
 
 
   return (
-    <div className="App">
+    <div className="App"
+    style={{
+      backgroundColor: "papayawhip",
+      height:"500vh"
+  }} 
+  >
       <Router>
         <Navbar setter = {setter} search = {searchTerm} searcher = { searcher } login = { setEmail }/>
         <Routes>

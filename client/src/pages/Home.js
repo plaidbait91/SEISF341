@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import { Button, Container, VStack,  StackDivider} from "@chakra-ui/react";
+import { Button, Container, VStack,  StackDivider, color} from "@chakra-ui/react";
 import Questionwrapper from '../components/Questionwrapper'
 
 
 export default function Home({ questions, email, deleter }) {
     
     return(
-        <div>
-            <Container maxW='container.lg' border='solid black' padding='12px' borderRadius={8}>
+        <div >
+            <Container maxW='container.lg' border='solid black' padding='12px' borderRadius={8} bgColor='white'>
                 <VStack 
                     spacing={4}
                     align='stretch'>

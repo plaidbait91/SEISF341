@@ -21,7 +21,7 @@ export default function Questionwrapper({question, email, deleter }) {
                     to = {`/question/${question._id}`}
                     state = {{question: {question}}}
                     size= '10px'
-                ><Heading as='h4' size='s' color='#0a95ff'>Q: {question.title}</Heading></Link>
+                ><Heading as='h4' size='m' color='#0a95ff'>Q: {question.title}</Heading></Link>
                 <Box><Text>{question.body}</Text></Box>
                 <Grid display="flex">
                     Tags:

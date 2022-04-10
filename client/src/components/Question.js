@@ -1,6 +1,6 @@
 import { useLocation, useParams } from "react-router-dom";
-import { Box, Flex, Heading, Text, HStack, Grid, GridItem,Input, InputGroup, InputLeftElement, IconButton } from "@chakra-ui/react"
-import {DeleteIcon} from '@chakra-ui/icons'
+import { Box, Flex, Heading, Text, HStack, Grid, GridItem,Input, InputGroup, InputLeftElement, IconButton} from "@chakra-ui/react"
+import {DeleteIcon, CheckIcon} from '@chakra-ui/icons'
 import {BiUpvote, BiDownvote, BiSend, BiDelete, BiEdit} from "react-icons/bi"
 import {FcCheckmark} from "react-icons/fc"
 import {MdOutlineReportProblem} from "react-icons/md"
@@ -12,6 +12,7 @@ const Question = ({ email }) => {
     const location = useLocation()
     const [question, setQuestion] = useState()
     const [answer, setAnswer] = useState('')
+    const [aId,appAnswer] = useState('')
 
     useEffect(()=>{
         axios.get(`http://localhost:5000/q/${id}`)
@@ -120,11 +121,33 @@ const Question = ({ email }) => {
         })
     }
 
+    const approveAnswer = (ans) => {
+        // console.log(ans);
+        // console.log(id);
+        axios({method: 'put', url: `http://localhost:5000/approve/${id}/${ans}`, headers : {
+            'x-access-token': localStorage.getItem('jwtToken') 
+        }, params: {
+            answer: ans
+        }})
+        .then(res=> {
+            console.log("Approve answer");
+            appAnswer(ans);
+        })
+        .catch(err=>{
+            console.error(err);
+        })
+    }
+
+
+
     return ( 
-        <div>
+        <div
+        >
+
             { question && (
                 
                 <Grid
+                bg='white' 
                 templateRows='repeat(2, 1fr)'
                 templateColumns='repeat(4, 1fr)'
                 gap={4}
@@ -146,7 +169,7 @@ const Question = ({ email }) => {
                     </Grid>
                 </GridItem>
                 <GridItem colStart={2} colEnd={4} bg='papayawhip' borderWidth='2px' borderRadius='5' padding={2}  >
-                    <Heading as='h4' size='lg' align='left'>{question.title} </Heading>
+                    <Heading as='h2' size='lg' align='left'>{question.title} </Heading>
                 </GridItem>
                 <GridItem colSpan={1} bg='white' shadow='sm' borderWidth='2px' flex='1' borderRadius='sm'  padding={2}>
                 <Box>Asked,  {new Date(question.createdAt).toLocaleString('default', { month: 'long' })} {new Date(question.createdAt).getDate()}, {new Date(question.createdAt).getFullYear()} at {new Date(question.createdAt).getHours()}:{new Date(question.createdAt).getMinutes()} by {question.postedBy.email}</Box>
@@ -158,11 +181,11 @@ const Question = ({ email }) => {
                 </GridItem>
 
             <GridItem display="flex">
-            {question.tags.map(tag => <GridItem margin="3px" display="flex" borderRadius="5px" borderWidth="2px" w={(tag.length*2).toString()+"%"}>{tag}</GridItem>)}
+            {question.tags.map(tag => <GridItem margin="3px" display="flex" borderRadius="5px" bgColor={"gray.200"} borderWidth="2px" w={(tag.length*3).toString()+"%"}>{tag}</GridItem>)}
             </GridItem>
 
             {/* Answer a Question */}
-            <GridItem colSpan={3} bg='' borderWidth='3px' borderRadius='20' padding={2}>
+            <GridItem colSpan={3} bg='' borderWidth='3px' borderRadius='15' padding={2}>
             <InputGroup  >
             <IconButton aria-label='Answer' textColor={"gray"} icon={<BiSend />} color="yellow.1000" onClick={postAnswer} />
                 <Input placeholder=' Answer...' color='white.300' 
@@ -171,16 +194,17 @@ const Question = ({ email }) => {
             </GridItem>
                 
                 {/* Answers */}
-                <GridItem colSpan={5} borderColor='blue.100' borderWidth='8px'>
+                <GridItem colSpan={5} borderColor='#a2bdf2' borderWidth='5px'>
                         
                         {question.answers.map(answer => (
-                            <GridItem margin='8px'
+                            <GridItem margin='8px' 
                             padding={8}
                             shadow='md' borderWidth='2px' flex='1' borderRadius='lg'>
-                                <Grid templateColumns='repeat(3, 1fr)'>
-                                    {(email == question.postedBy.email) ? <GridItem colStart={1} marginLeft="650px" ><IconButton w='8' icon={<FcCheckmark/>} /></GridItem> : null}
-                                    {(email == answer.postedBy.email) ? <GridItem colStart={2}  ><IconButton w='8' icon={<BiEdit/>}  /></GridItem> : null}
-                                    {(email == answer.postedBy.email) ? <GridItem colStart={3} ><IconButton w='8' icon={<DeleteIcon/>} onClick = {() => deleteAnswer(answer._id)} /></GridItem> : null}
+                                <Grid templateColumns='repeat(4, 1fr)'>
+                                    {(answer.approved === true || aId === answer._id) && <GridItem colStart={1} marginLeft="0px" ><CheckIcon boxSize={5} color="green"/></GridItem>}
+                                    {(email == question.postedBy.email) ? <GridItem colStart={2}  ><IconButton w='8' icon={<FcCheckmark/>} onClick = {() => approveAnswer(answer._id)} /></GridItem> : null}
+                                    {(email == answer.postedBy.email) ? <GridItem colStart={3}  ><IconButton w='8' icon={<BiEdit/>}  /></GridItem> : null}
+                                    {(email == answer.postedBy.email) ? <GridItem colStart={4} ><IconButton w='8' icon={<DeleteIcon/>} onClick = {() => deleteAnswer(answer._id)} /></GridItem> : null}
                                     <GridItem colStart={4} ><IconButton w='8' icon={<MdOutlineReportProblem/>} /></GridItem>
                                     
                                 </Grid>

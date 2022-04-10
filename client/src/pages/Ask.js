@@ -38,6 +38,7 @@ const Ask = () => {
 
     return ( 
         <Grid
+            bgColor={"white"}
             templateRows='repeat(2, 1fr)'
             templateColumns='repeat(1, 1fr)'
             gap={10}
@@ -46,12 +47,12 @@ const Ask = () => {
             shadow='md' borderWidth='2px' flex='1' borderRadius='lg'
             >
                 <GridItem>
-                    <Heading>Ask a question</Heading>
+                    <Heading as='h1' size='lg'>Ask a Question</Heading>
                 </GridItem>
                 <GridItem shadow='md' flex='1' borderRadius='lg' align="left" padding={1} borderWidth='2px'>
                     <Grid templateColumns='repeat(10, 1fr)'>
                         <GridItem colSpan={1}>
-                            <Heading>Title</Heading>
+                            <Heading as='h1' size='lg'>Title</Heading>
                         </GridItem>
                         <GridItem colStart={2} colEnd={12}>
                             <Input
@@ -65,7 +66,7 @@ const Ask = () => {
                 <GridItem shadow='md' flex='1' borderRadius='lg' align="left" padding={1} borderWidth='2px'>
                     <Grid templateRows='repeat(2, 1fr)' templateColumns='repeat(1, 1fr)'>
                         <GridItem colSpan={1}>
-                            <Heading>Body</Heading>
+                            <Heading as='h1' size='lg'>Body</Heading>
                         </GridItem>
                         <br/>
                         <GridItem>

@@ -6,18 +6,34 @@ const Ask = () => {
     
     const [title, setTitle] = useState('')
     const [body, setBody] = useState('')
+    const [tags, setTags] = useState([])
+    const [tag, setTag] = useState('')
+
+    const updateQuery = ({target}) => {
+        setTag(target.value)
+    }
+
+    const keyPressed = ({key}) => {
+        if(key === "Enter")
+        {
+            setTags(tags => [...tags, tag])
+            setTag('')
+        }
+    }
 
     const askq = (e) => {
-        const question = { title, body }
+        const question = { title, body, tags }
         axios.post('/ask', question, { headers : {
             'x-access-token': localStorage.getItem('jwtToken') 
         } }).then((err) => {
             console.log('new question added')
             console.log("Status:",err);
         })
-
+        console.log(tags)
         setTitle('')
         setBody('')
+        setTags([])
+        setTag('')
     }
 
     return ( 
@@ -60,6 +76,27 @@ const Ask = () => {
                                     onChange={(e) => setBody(e.target.value)}
                                 ></Textarea>
                             </Grid>
+                        </GridItem>
+                    </Grid>
+                </GridItem>
+                <GridItem shadow='md' flex='1' borderRadius='lg' align="left" padding={1} borderWidth='2px'>
+                    <Grid templateRows='repeat(2, 1fr)' templateColumns='repeat(1, 1fr)'>
+                        <GridItem colSpan={1}>
+                            <Heading>Tags</Heading>
+                        </GridItem>
+                        <br/>
+                        <GridItem>
+                            <Grid margin="5px">
+                                <Input
+                                    required
+                                    value={tag}
+                                    onChange={updateQuery}
+                                    onKeyPress={keyPressed}
+                                ></Input>
+                            </Grid>
+                            <GridItem display="flex">
+                            {tags.map(tag => <GridItem margin="3px" display="flex" borderRadius="5px" borderWidth="2px" w={(tag.length*2).toString()+"%"}>{tag}</GridItem>)}
+                            </GridItem>
                         </GridItem>
                     </Grid>
                 </GridItem>

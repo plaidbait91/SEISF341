@@ -575,12 +575,12 @@ app.put('/report/:question', auth, (req, res) => {
 app.put('/approve/:question/:answer', auth, (req, res) => {
   const qId = req.params.question;
   const ans = req.params.answer;
-
+  
   Question.findById(qId)
   .then(result => {
     if(result) {
-
-      if(result.postedBy == req.user.email) {
+      let doc = result;
+      if(result.postedBy.email == req.user.email) {
         doc.answers = doc.answers.map(item => {
           let x = item
   
@@ -593,7 +593,9 @@ app.put('/approve/:question/:answer', auth, (req, res) => {
         res.send(doc)
       }
 
-      else return res.status(401).send({error: 'Unauthorized modify/delete'})
+      else {
+        return res.status(401).send({error: 'Unauthorized modify/delete'})
+      }
     }
 
     else {

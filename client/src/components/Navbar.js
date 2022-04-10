@@ -72,7 +72,7 @@ const onSignoutSuccess = () => {
     return(
         <>
         <Flex direction="row"
-        bgColor="red.400"
+        bgColor="#e02504"
         h="8vh"
         w="full"
         fontSize="xl"
@@ -149,14 +149,14 @@ const onSignoutSuccess = () => {
                 position: 'absolute',
                 bottom: 1,
                 left: 0,
-                bg: 'red.400',
+                bg: '#e02504',
                 zIndex: -1,
               }}
               fontStyle={'italic'}>
               🅖Overflow
             </Text>
             {" "}
-            <Text as={'span'} color={'red.400'} fontSize={{ base: '2xl', sm: '3xl', lg: '5xl' }}>
+            <Text as={'span'} color={'#e02504'} fontSize={{ base: '2xl', sm: '3xl', lg: '5xl' }}>
               your QnA Forum!
             </Text>
             <br/><br/>

@@ -13,7 +13,8 @@ const _ = require('./models/user');
 const User = _.User
  
 const app = express();
-app.use(cors());
+app.use(express.json())
+app.use(cors({origin: "http://localhost:3000"}));
 // connect to mongoDB atlas using mongoose
 mongoose.connect( process.env.MONGODB_API_URI,
   {
@@ -29,7 +30,7 @@ db.once("open", function () {
 	console.log("MongoDB Atlas Connection Successful");
   });
  
-app.use(express.json())
+
  
   // Basic endpoint of the backend
 app.get('/',(req,res)=>{
@@ -61,7 +62,7 @@ app.post('/login', (req, res) => {
     if(doc) {
  
       payload = {
-        name: doc.fullName,
+        fullName: doc.fullName,
         email: doc.email
       }
  
@@ -77,7 +78,7 @@ app.post('/login', (req, res) => {
       newUser.save()
         .then(result => {
           payload = {
-            name: result.fullName,
+            fullName: result.fullName,
             email: result.email
           }
           console.log("reached payload");
@@ -97,9 +98,9 @@ app.post('/login', (req, res) => {
   })
 })
  
-app.get('/u/:username', (req, res) => {
-  const user = req.params.username
-  User.find({username: user})
+app.get('/u/:email', (req, res) => {
+  const user = req.params.email
+  User.find({email: user})
   .then(result => {
  
     if(result.length > 0) {
@@ -115,13 +116,23 @@ app.get('/u/:username', (req, res) => {
 })
  
 app.post('/ask', auth, (req, res) => {
-  const question = new Question(req.body)
+  const qBody = req.body
+  qBody.postedBy = req.user
+  const question = new Question(qBody)
  
   question.save()
     .then(result => {
+
+      User.findOneAndUpdate({ email : req.user.email }, {
+        $push: { "questions" : result._id}
+      }, function(err, res) {
+        if(err) console.log(err);
+
+        console.log(res);
+      })
+
       res.send({
-        result: result,
-        user: req.user
+        result
       });
       console.log("done")
     })
@@ -163,13 +174,29 @@ app.get('/q/:question', (req, res) => {
  
 app.post('/answer/:question', auth, (req, res) => {
   const qId = req.params.question
- 
+  const ansBody = req.body
+  ansBody.postedBy = req.user
+
   Question.findById(qId)
   .then(result => {
  
     if(result) {
-      result.answers.push(req.body)
+      result.answers.push(ansBody)
       result.save()
+
+      const ans = result.answers[result.answers.length - 1]._id
+      console.log(ans)
+      User.findOneAndUpdate({ email : req.user.email }, {
+        $push: { "answers" : {
+          qId: qId,
+          aId: ans
+        }}
+      }, function(err, res) {
+        if(err) console.log(err);
+
+        console.log(res);
+      })
+
       res.status(200).json(result)
     }
     else {
@@ -203,6 +230,20 @@ app.delete('/q/:question', auth, (req, res) => {
         if(temp.length != doc.answers.length) {
           doc.answers = temp
           doc.save()
+
+          User.findOneAndUpdate({ email : req.user.email }, {
+            $pull: { answers : {
+              qId: qId,
+              aId: ans
+            }},
+
+            $inc: { "upvotes": -doc.upvotes }
+          }, function(err, res) {
+            if(err) console.log(err);
+    
+            console.log(res);
+          })
+          
           res.send(doc)
         }
  
@@ -220,6 +261,16 @@ app.delete('/q/:question', auth, (req, res) => {
       else {
         if(req.user.email == result.postedBy.email) {
           doc.deleteOne()
+
+          User.findOneAndUpdate({ email : req.user.email }, {
+            $pullAll: { "questions" : [qId] },
+            $inc: { "upvotes": -doc.upvotes }
+          }, function(err, res) {
+            if(err) console.log(err);
+    
+            console.log(res);
+          })
+
           res.send(`Question ${doc._id} deleted`)
         }
  
@@ -300,42 +351,257 @@ app.put('/q/:question', auth, (req, res) => {
  
 })
  
-app.put('/vote/:question', auth, (req, res) => {
+app.put('/upvote/:question', auth, (req, res) => {
   const qId = req.params.question
-  let down = req.query.d
+  const uId = req.user.email
   let ans = req.query.ans
- 
+
   Question.findById(qId)
   .then(result => {
  
     let doc = result;
  
     if(result) {
+ 
       if(ans) {
  
+        let found = false;
         doc.answers = doc.answers.map(item => {
           let x = item
+ 
           if(item._id == ans) {
-            if(down) x.upvotes--
-            else x.upvotes++
-          }
+            found = true;
+            let old = x.upvotes
+            x.downvoteList = x.downvoteList.filter(id => id != uId)
+
+            let temp = x.upvoteList.filter(id => id != uId)
+            if(temp.length == x.upvoteList.length) temp.push(uId)
+
+            x.upvoteList = temp
+            x.upvotes = x.upvoteList.length - x.downvoteList.length
+
+            User.findOneAndUpdate({ email : x.postedBy.email }, {
+              $inc: { "upvotes": x.upvotes - old }
+            }, function(err, res) {
+              if(err) console.log(err);
+      
+              console.log(res);
+            })
+          } 
  
           return x
         })
  
+        if(!found) return res.status(404).send({error: 'Answer not found'})
+
       }
  
       else {
-        if(down) doc.upvotes--
-        else doc.upvotes++
+        let old = doc.upvotes
+        doc.downvoteList = doc.downvoteList.filter(id => id != uId)
+
+        let temp = doc.upvoteList.filter(id => id != uId)
+        if(temp.length == doc.upvoteList.length) temp.push(uId)
+
+        doc.upvoteList = temp
+        doc.upvotes = doc.upvoteList.length - doc.downvoteList.length
+
+        User.findOneAndUpdate({ email : doc.postedBy.email }, {
+          $inc: { "upvotes": doc.upvotes - old }
+        }, function(err, res) {
+          if(err) console.log(err);
+  
+          console.log(res);
+        })
+        
       }
  
       doc.save()
       res.send(doc)
+ 
     }
     else {
       res.status(404).json({error: 'Question not found'})
     }
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).json(err)
+  });
+
+
+})
+
+app.put('/downvote/:question', auth, (req, res) => {
+  const qId = req.params.question
+  const uId = req.user.email
+  let ans = req.query.ans
+
+  Question.findById(qId)
+  .then(result => {
+ 
+    let doc = result;
+ 
+    if(result) {
+ 
+      if(ans) {
+ 
+        let found = false;
+        doc.answers = doc.answers.map(item => {
+          let x = item
+ 
+          if(item._id == ans) {
+            found = true;
+            let old = x.upvotes
+            x.upvoteList = x.upvoteList.filter(id => id != uId)
+
+            let temp = x.downvoteList.filter(id => id != uId)
+            if(temp.length == x.downvoteList.length) temp.push(uId)
+
+            x.downvoteList = temp
+            x.upvotes = x.upvoteList.length - x.downvoteList.length
+
+            User.findOneAndUpdate({ email : x.postedBy.email }, {
+              $inc: { "upvotes": x.upvotes - old }
+            }, function(err, res) {
+              if(err) console.log(err);
+      
+              console.log(res);
+            })
+
+          } 
+ 
+          return x
+        })
+ 
+        if(!found) return res.status(404).send({error: 'Answer not found'})
+
+      }
+ 
+      else {
+        let old = doc.upvotes
+        doc.upvoteList = doc.upvoteList.filter(id => id != uId)
+
+        let temp = doc.downvoteList.filter(id => id != uId)
+        if(temp.length == doc.downvoteList.length) temp.push(uId)
+
+        doc.downvoteList = temp
+        doc.upvotes = doc.upvoteList.length - doc.downvoteList.length
+
+        User.findOneAndUpdate({ email : doc.postedBy.email }, {
+          $inc: { "upvotes": doc.upvotes - old }
+        }, function(err, res) {
+          if(err) console.log(err);
+  
+          console.log(res);
+        })
+      }
+ 
+      doc.save()
+      res.send(doc)
+ 
+    }
+    else {
+      res.status(404).json({error: 'Question not found'})
+    }
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).json(err)
+  });
+
+
+})
+
+app.put('/report/:question', auth, (req, res) => {
+  const qId = req.params.question
+  const uId = req.user.email
+  let ans = req.query.ans
+
+  Question.findById(qId)
+  .then(result => {
+ 
+    let doc = result;
+ 
+    if(result) {
+ 
+      if(ans) {
+ 
+        let found = false;
+        doc.answers = doc.answers.map(item => {
+          let x = item
+ 
+          if(item._id == ans) {
+            found = true;
+            let temp = x.reportList
+            x.reportList = x.reportList.filter(id => id != uId)
+
+            if(temp.length == x.reportList.length) x.reportList.push(uId) 
+
+            x.reports += x.reportList.length - temp.length
+          } 
+ 
+          return x
+        })
+ 
+        if(!found) return res.status(404).send({error: 'Answer not found'})
+
+      }
+ 
+      else {
+        let temp = doc.reportList
+        doc.reportList = doc.reportList.filter(id => id != uId)
+
+        if(temp.length == doc.reportList.length) doc.reportList.push(uId) 
+
+        doc.reports += doc.reportList.length - temp.length
+      }
+ 
+      doc.save()
+      res.send(doc)
+ 
+    }
+    else {
+      res.status(404).json({error: 'Question not found'})
+    }
+  })
+  .catch(err => {
+    console.log(err)
+    res.status(500).json(err)
+  });
+  
+})
+
+app.put('/approve/:question/:answer', auth, (req, res) => {
+  const qId = req.params.question;
+  const ans = req.params.answer;
+  
+  Question.findById(qId)
+  .then(result => {
+    if(result) {
+      let doc = result;
+      if(result.postedBy.email == req.user.email) {
+        doc.answers = doc.answers.map(item => {
+          let x = item
+  
+          if(item._id == ans) x.approved = !x.approved;
+  
+          return x
+        })
+    
+        doc.save()
+        res.send(doc)
+      }
+
+      else {
+        return res.status(401).send({error: 'Unauthorized modify/delete'})
+      }
+    }
+
+    else {
+      res.status(404).json({error: 'Question not found'})
+    }
+
   })
   .catch(err => {
     console.log(err)
@@ -352,7 +618,8 @@ app.get('/search', (req, res) => {
   Question.find({ $or: [
     { body: { $regex: searchRegex, $options: 'i' } },
     { title: { $regex: searchRegex, $options: 'i' } },
-    { answers: { $elemMatch: { body: { $regex: searchRegex, $options: 'i' } } } }
+    { answers: { $elemMatch: { body: { $regex: searchRegex, $options: 'i' } } } },
+    { tags: { $regex: searchRegex, $options: 'i' } }
   ]})
   .then(result => {
     res.send(result)

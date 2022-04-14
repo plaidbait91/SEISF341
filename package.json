@@ -20,5 +20,8 @@
   "homepage": "https://github.com/AnishKacham/SEISF341#readme",
   "devDependencies": {
     "concurrently": "^7.0.0"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.15"
   }
 }

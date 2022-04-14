@@ -14,7 +14,7 @@ const clientId = '980895739592-obqt1v1p1vng0co9bfdnkr0r3pff4kp3.apps.googleuserc
 
 
 
-export default function Navbar(){
+export default function Navbar({ setter, search, searcher, login }){
 
   const [showloginButton, setShowloginButton] = useState(true);
   const [showlogoutButton, setShowlogoutButton] = useState(false);
@@ -23,24 +23,30 @@ export default function Navbar(){
   const [pplink, setPPLink] = useState();
 
   const sendDeets = async (name,email)=>{
-    console.log(name,email);
+    // console.log(name,email);
     axios.post("/login", {name,email})
     .then((res)=>{
-      console.log(res);
-      // localStorage.setItem('jwtToken',res.data.token);
+      // console.log(res);
+      localStorage.setItem('jwtToken',res.data.token);
       // console.log(localStorage.getItem('jwtToken'));
+      localStorage.setItem('email', email);
+      login(email)
     })
   }
 
   const onLoginSuccess = (res) => {
-    console.log('INSIDE LOGIN SUCCESS FUNCTION')
-    console.log('profile object: ', res.profileObj);
+    // console.log('INSIDE LOGIN SUCCESS FUNCTION')
     setPPLink(res.profileObj.imageUrl);
-    console.log('PROFILE_PICTURE: ',pplink);
     setName(res.profileObj.name)
-    console.log('NAME: ', res.profileObj.name);
     setEmail(res.profileObj.email);
+    localStorage.setItem('pplink',res.profileObj.imageUrl);
+    localStorage.setItem('name', res.profileObj.name);
+    localStorage.setItem('email', res.profileObj.email);
+    console.log('PROFILE_OBJECT: ', res.profileObj);
+    console.log('PROFILE_PICTURE: ',res.profileObj.imageUrl);
+    console.log('NAME: ', res.profileObj.name);
     console.log('EMAIL: ', res.profileObj.email);
+
 
     refreshTokenSetup(res);
     setShowloginButton(false);
@@ -60,12 +66,13 @@ const onSignoutSuccess = () => {
   setName();
   setShowloginButton(true);
   setShowlogoutButton(false);
+  login('');
 };
 
     return(
         <>
         <Flex direction="row"
-        bgColor="red.400"
+        bgColor="#e02504"
         h="8vh"
         w="full"
         fontSize="xl"
@@ -73,9 +80,11 @@ const onSignoutSuccess = () => {
         justify="space-evenly"
 >
         <Flex justify = "space-around" w="20%" align="center"  >
-        <Text ><Link  to="/" mr={5}><LinkC>Home</LinkC></Link> </Text>
+        <Text ><Link  to="/" mr={5}>Home</Link> </Text>
         <Text>|</Text>
-        <Text> <Link to="/profile" ml={5}><LinkC>Profile</LinkC></Link></Text>
+        <Text> <Link to="/profile" ml={5}>Profile</Link></Text>
+        <Text>|</Text>
+        <Text> <Link to="/askquestion" ml={5}>Post Question</Link></Text>
         </Flex>
 
         <Flex justify="space-around" w="20%" align="center">
@@ -84,7 +93,16 @@ const onSignoutSuccess = () => {
             pointerEvents='none'
             children={<IconButton aria-label='Search' icon={<SearchIcon />} colorScheme="red.400" />}
           />
-          <Input placeholder=' Search...' color='white.300' _placeholder={{ color: 'white' }} />
+          <Input placeholder=' Search...' color='white.300' _placeholder={{ color: 'white' }}
+                  onKeyPress={e => 
+                    {
+                      if(e.key == 'Enter')
+                        searcher()
+                    }
+                  }
+                  value={search}
+                  onChange={e => setter(e.target.value)}
+            />
         </InputGroup>
         </Flex>
         <Flex justify="right" w="40%" align="center">
@@ -131,14 +149,14 @@ const onSignoutSuccess = () => {
                 position: 'absolute',
                 bottom: 1,
                 left: 0,
-                bg: 'red.400',
+                bg: '#e02504',
                 zIndex: -1,
               }}
               fontStyle={'italic'}>
               🅖Overflow
             </Text>
             {" "}
-            <Text as={'span'} color={'red.400'} fontSize={{ base: '2xl', sm: '3xl', lg: '5xl' }}>
+            <Text as={'span'} color={'#e02504'} fontSize={{ base: '2xl', sm: '3xl', lg: '5xl' }}>
               your QnA Forum!
             </Text>
             <br/><br/>

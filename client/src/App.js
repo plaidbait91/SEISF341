@@ -7,8 +7,6 @@ import Profile from './pages/Profile';
 import Ask from './pages/Ask'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { colours } from 'nodemon/lib/config/defaults';
-import { background } from '@chakra-ui/react';
 
 function App() {
 

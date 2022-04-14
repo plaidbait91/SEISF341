@@ -15,7 +15,7 @@ const Question = ({ email }) => {
     const [aId,appAnswer] = useState('')
 
     useEffect(()=>{
-        axios.get(`http://localhost:5000/q/${id}`)
+        axios.get(`/q/${id}`)
         .then(res=>{
             console.log(res);
             setQuestion(res.data);
@@ -29,7 +29,7 @@ const Question = ({ email }) => {
     const up = () => {
         console.log("up");
         
-        axios({method: 'put', url: `http://localhost:5000/upvote/${id}`, headers : {
+        axios({method: 'put', url: `/upvote/${id}`, headers : {
             'x-access-token': localStorage.getItem('jwtToken') 
         }})
         .then(res=> {
@@ -44,7 +44,7 @@ const Question = ({ email }) => {
     const down = () => {
         console.log("down");
 
-        axios({method: 'put', url: `http://localhost:5000/downvote/${id}`, headers : {
+        axios({method: 'put', url: `/downvote/${id}`, headers : {
             'x-access-token': localStorage.getItem('jwtToken') 
         }})
         .then(res=> {
@@ -59,7 +59,7 @@ const Question = ({ email }) => {
     const upAns = (ans) => {
         console.log("upAns");
         
-        axios({method: 'put', url: `http://localhost:5000/upvote/${id}`, headers : {
+        axios({method: 'put', url: `/upvote/${id}`, headers : {
             'x-access-token': localStorage.getItem('jwtToken') 
         }, params: {
             ans: ans
@@ -76,7 +76,7 @@ const Question = ({ email }) => {
     const downAns = (ans) => {
         console.log("downAns");
 
-        axios({method: 'put', url: `http://localhost:5000/downvote/${id}`, headers : {
+        axios({method: 'put', url: `/downvote/${id}`, headers : {
             'x-access-token': localStorage.getItem('jwtToken') 
         }, params: {
             ans: ans
@@ -93,7 +93,7 @@ const Question = ({ email }) => {
     const postAnswer = () => {
         const ans = { body: answer }
 
-        axios.post(`http://localhost:5000/answer/${id}`, ans, { headers : {
+        axios.post(`/answer/${id}`, ans, { headers : {
             'x-access-token': localStorage.getItem('jwtToken') 
         } }).then(res => {
             console.log(res);
@@ -107,7 +107,7 @@ const Question = ({ email }) => {
     }
 
     const deleteAnswer = (ans) => {
-        axios({method: 'delete', url: `http://localhost:5000/q/${id}`, headers : {
+        axios({method: 'delete', url: `/q/${id}`, headers : {
             'x-access-token': localStorage.getItem('jwtToken') 
         }, params: {
             ans: ans
@@ -124,7 +124,7 @@ const Question = ({ email }) => {
     const approveAnswer = (ans) => {
         // console.log(ans);
         // console.log(id);
-        axios({method: 'put', url: `http://localhost:5000/approve/${id}/${ans}`, headers : {
+        axios({method: 'put', url: `/approve/${id}/${ans}`, headers : {
             'x-access-token': localStorage.getItem('jwtToken') 
         }, params: {
             answer: ans

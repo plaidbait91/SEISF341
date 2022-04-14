@@ -23,7 +23,7 @@ function App() {
   }, [])
 
   const searcher = () => {
-    axios.get('http://localhost:5000/search', {
+    axios.get('/search', {
       params: { q: searchTerm }
     })
         .then(res=>{
@@ -37,7 +37,7 @@ function App() {
   }
 
   const delQ = (id) => {
-    axios.delete(`http://localhost:5000/q/${id}`, { headers : {
+    axios.delete(`/q/${id}`, { headers : {
       'x-access-token': localStorage.getItem('jwtToken') 
       } })
       .then(res => {

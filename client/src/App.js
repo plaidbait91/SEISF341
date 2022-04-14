@@ -29,7 +29,7 @@ function App() {
         .then(res=>{
             console.log(res);
             setQuestions(res.data);
-            console.log(questions)
+            // console.log(questions)
         })
         .catch(err=>{
             console.error(err);

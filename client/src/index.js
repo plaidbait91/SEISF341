@@ -5,8 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {ChakraProvider} from '@chakra-ui/react'
 import axios from 'axios';
+import { baseUrl } from './config';
 
-axios.defaults.baseURL = process.env.BASE_URL;
+axios.defaults.baseURL = baseUrl
 
 ReactDOM.render(
   <React.StrictMode>

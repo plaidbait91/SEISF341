@@ -14,7 +14,8 @@ const User = _.User
  
 const app = express();
 app.use(express.json())
-app.use(cors({origin: ["http://localhost:3000", "https://g-overflow.netlify.app/"]}));
+app.use(cors());
+
 // connect to mongoDB atlas using mongoose
 mongoose.connect( process.env.MONGODB_API_URI,
   {

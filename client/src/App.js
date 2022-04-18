@@ -7,8 +7,6 @@ import Profile from './pages/Profile';
 import Ask from './pages/Ask'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { colours } from 'nodemon/lib/config/defaults';
-import { background } from '@chakra-ui/react';
 
 function App() {
 
@@ -25,13 +23,13 @@ function App() {
   }, [])
 
   const searcher = () => {
-    axios.get('http://localhost:5000/search', {
+    axios.get('/search', {
       params: { q: searchTerm }
     })
         .then(res=>{
             console.log(res);
             setQuestions(res.data);
-            console.log(questions)
+            // console.log(questions)
         })
         .catch(err=>{
             console.error(err);
@@ -39,7 +37,7 @@ function App() {
   }
 
   const delQ = (id) => {
-    axios.delete(`http://localhost:5000/q/${id}`, { headers : {
+    axios.delete(`/q/${id}`, { headers : {
       'x-access-token': localStorage.getItem('jwtToken') 
       } })
       .then(res => {
